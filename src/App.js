@@ -1,14 +1,15 @@
 import { StatusBar } from 'expo-status-bar';
-import { NavigationContainer } from '@react-navigation/native';
-import AuthStack from './navigations/AuthStack';
+import { UserProvider } from './contexts/UserContext';
+import Navigation from './navigations/Navigation'
 
 const App = () => {
   return (
-    <NavigationContainer>
+    <UserProvider>
       <StatusBar style="dark" />
-      <AuthStack />
-    </NavigationContainer>
+      <Navigation />
+    </UserProvider>
 );
 }
 
 export default App;
+
