@@ -8,71 +8,74 @@ import UserContext from '../contexts/UserContext';
 import { useUserContext } from '../contexts/UserContext';
 
 const SignInScreen = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const passwordRef = useRef(null);
-    const [disabled, setDisabled] = useState(true);
-    const [isLoading, setIsLoading] = useState(false);
-    const { setUser } = useUserContext();
-    
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const passwordRef = useRef(null);
+  const [disabled, setDisabled] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const { setUser } = useUserContext();
 
-    useEffect(() => {
-      setDisabled(!email || !password);
-    }, [email, password]);
+  useEffect(() => {
+    setDisabled(!email || !password);
+  }, [email, password]);
 
-    const onSubmit = async (setUser) => {
-      if(!isLoading && !disabled){
-        try {
-          Keyboard.dismiss();
-          const data = await signIn(email, password);
-          console.log(data);
-          setIsLoading(false);
-          setUser(data);
-        } catch (error) {
-          Alert.alert('로그인 실패', error, [
-            { text: '확인', onPress: () => setIsLoading(false) },
-          ]);
-        }
-        setIsLoading(false);
-      } 
-    };
-
-  return (
-    <View style={styles.container}>
-      <Image 
-        source={require('../../assets/main.png')}
-        style={styles.image}
-      />
-      <Input 
-        title={'이메일'}
-        placeholder="myemail@test.com"
-        keyboardType={KeyboardTypes.EMAIL}  
-        returnKeyType={ReturnKeyTypes.NEXT} 
-        value={email}
-        onChangeText={(email) => setEmail(email.trim())}
-        iconName={IconNames.EMAIL}
-        onSubmitEditing={() => passwordRef.current.focus()}
-      />
-      <Input 
-        ref={passwordRef}
-        title={'비밀번호'} 
-        returnKeyType={ReturnKeyTypes.DONE}  
-        secureTextEntry
-        value={password}
-        onChangeText={(password) => setPassword(password.trim())}
-        iconName={IconNames.PASSWORD}
-        onSubmitEditing={onSubmit}
-      />
-      <View style={styles.buttonContainer}>
-        <Button title="로그인" 
-                onPress={onSubmit} 
-                disabled={disabled}
-                isLoading={isLoading}
-              />
-      </View>
-    </View>
-    );
+  const onSubmit = async () => {  // 인자를 받지 않도록 수정
+    if (!isLoading && !disabled) {
+      try {
+        setIsLoading(true);
+        const data = await signIn(email, password);
+        console.log("111", data);  // 성공 로그
+        setUser(data);  // 유저 설정
+      } catch (error) {
+        console.log("222", typeof error);  // 에러 타입 확인
+        const errorMessage = typeof error === 'string' ? error : JSON.stringify(error);
+        Alert.alert('로그인 실패', errorMessage, [
+          { text: '확인', onPress: () => setIsLoading(false) },
+        ]);
+      } finally {
+        setIsLoading(false);  // 최종적으로 로딩 상태를 false로 설정
+      }
+    }
   };
+
+return (
+  <View style={styles.container}>
+    <Image 
+      source={require('../../assets/main.png')}
+      style={styles.image}
+    />
+    <Input 
+      title={'이메일'}
+      placeholder="myemail@test.com"
+      keyboardType={KeyboardTypes.EMAIL}  
+      returnKeyType={ReturnKeyTypes.NEXT} 
+      value={email}
+      onChangeText={(email) => setEmail(email.trim())}
+      iconName={IconNames.EMAIL}
+      onSubmitEditing={() => passwordRef.current.focus()}
+    />
+    <Input 
+      ref={passwordRef}
+      title={'비밀번호'} 
+      returnKeyType={ReturnKeyTypes.DONE}  
+      secureTextEntry
+      value={password}
+      onChangeText={(password) => setPassword(password.trim())}
+      iconName={IconNames.PASSWORD}
+      onSubmitEditing={onSubmit}
+    />
+    <View style={styles.buttonContainer}>
+      <Button 
+        title="로그인" 
+        onPress={onSubmit}  // setUser 인자를 전달하지 않음
+        disabled={disabled}
+        isLoading={isLoading}
+      />
+    </View>
+  </View>
+);
+};
+
 
 SignInScreen.propTypes = {
   navigation: PropTypes.object,
