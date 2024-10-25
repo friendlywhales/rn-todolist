@@ -7,7 +7,13 @@ export const ButtonTypes = {
   DANGER: 'DANGER',
 };
 
-const Button = ({ title, onPress, disabled, isLoading, buttonType }) => {
+const Button = ({ 
+  title, 
+  onPress, 
+  disabled = false, 
+  isLoading = false, 
+  buttonType = ButtonTypes.PRIMARY 
+}) => {
   const colors = { PRIMARY, DANGER };
 
   return (
@@ -28,10 +34,6 @@ const Button = ({ title, onPress, disabled, isLoading, buttonType }) => {
       )}
     </Pressable>
   );
-};
-
-Button.defaultProps = {
-  buttonType: ButtonTypes.PRIMARY,
 };
 
 Button.propTypes = {
